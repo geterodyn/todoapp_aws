@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Группировка по приоритетам{% endblock %}
+
+{% block extra_head %}
+<script src="{% static 'js/script.js' %}"></script>
+{% endblock %}
+
+{% block main_content %}
+
+<h1>Текущие задачи, разбитые по приоритетам</h1>
+	<ul id="todo-list">
+
+        <p><span class="badge badge-pill badge-danger">&nbsp;</span>&nbsp;Высокий приоритет</p>
+        {% for task in tasks %}
+            {% if task.priority == task.PRIORITY_HIGH %}
+                {% if task.is_completed %}
+                <li class="completed">
+                    <input class="checkbox" data-uid={{ task.id }} type="checkbox" disabled="disabled" checked="checked" />
+                {% else %}
+                <li>
+                    <input class="checkbox" data-uid={{ task.id }} type="checkbox" />
+                {% endif %}
+
+                <a href="{% url 'tasks:details' task.id %}">{{ task }}</a>
+                <a class="remove" href={% url 'tasks:delete' task.id %}>X</a>
+                </li>
+            {%endif%}
+            
+        {%endfor%}
+<hr/>
+        <p><span class="badge badge-pill badge-warning">&nbsp;</span>&nbsp;Средний приоритет</p>
+        {% for task in tasks %}
+            {% if task.priority == task.PRIORITY_MEDIUM %}
+                {% if task.is_completed %}
+                <li class="completed">
+                    <input class="checkbox" data-uid={{ task.id }} type="checkbox" disabled="disabled" checked="checked" />
+                {% else %}
+                <li>
+                    <input class="checkbox" data-uid={{ task.id }} type="checkbox" />
+                {% endif %}
+
+                <a href="{% url 'tasks:details' task.id %}">{{ task }}</a>
+                <a class="remove" href={% url 'tasks:delete' task.id %}>X</a>
+            </li>
+            {%endif%}
+        {%endfor%}
+<hr/>
+        <p><span class="badge badge-pill badge-success">&nbsp;</span>&nbsp;Низкий приоритет</p>
+        {% for task in tasks %}
+            {% if task.priority == task.PRIORITY_LOW %}
+                {% if task.is_completed %}
+                <li class="completed">
+                    <input class="checkbox" data-uid={{ task.id }} type="checkbox" disabled="disabled" checked="checked" />
+                {% else %}
+                <li>
+                    <input class="checkbox" data-uid={{ task.id }} type="checkbox" />
+                {% endif %}
+
+                <a href="{% url 'tasks:details' task.id %}">{{ task }}</a>
+                <a class="remove" href={% url 'tasks:delete' task.id %}>X</a>
+            </li>
+            {%endif%}
+        {%endfor%}
+	</ul>
+{% endblock %}

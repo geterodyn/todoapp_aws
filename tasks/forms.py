@@ -15,3 +15,4 @@ class TasksExportForm(forms.Form):
     prio_high = forms.BooleanField(label='высокой важности', initial=True, required=False)
     prio_med = forms.BooleanField(label='средней важности', initial=True, required=False)
     prio_low = forms.BooleanField(label='низкой важности', initial=False, required=False)
+    group = forms.BooleanField(label='Сгруппировать по приоритетам', initial=False, required=False)

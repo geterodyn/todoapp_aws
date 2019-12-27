@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.views import View
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib import messages
 
 from accounts.forms import LoginForm, RegistrationForm, UserEditForm, ProfileEditForm
 from accounts.models import Profile
@@ -57,6 +58,7 @@ def edit(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
+            messages.success(request, 'Данные пользователя изменены')
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(instance=request.user.profile)

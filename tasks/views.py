@@ -39,6 +39,7 @@ def add_task(request):
 		desc = request.POST['description']
 		t = TodoItem(description=desc)
 		t.save()
+		messages.success(request,'Задача добавлена')
 	return redirect(reverse('tasks:list'))
 
 def delete_task(request, uid):
@@ -58,8 +59,7 @@ def delete_task(request, uid):
 # 	return render(request, 'tasks/create.html', {'form': form}) # ключ словаря - то, что мы используем в шаблоне в {{}},
 # 													# значение словаря - то, что мы определяем в данном обработчике
 
-class TaskListView(LoginRequiredMixin, 
-ListView):
+class TaskListView(LoginRequiredMixin, ListView):
 	# queryset = TodoItem.objects.all()
 	model = TodoItem
 	context_object_name = 'tasks'
@@ -69,6 +69,23 @@ ListView):
 		u = self.request.user
 		return u.tasks.all()
 		
+class UncompletedTaskListView(LoginRequiredMixin, ListView):
+	model = TodoItemForm
+	context_object_name = 'tasks'
+	template_name = 'tasks/list.html'
+
+	def get_queryset(self):
+		u = self.request.user
+		return u.tasks.filter(is_completed=False)
+
+class GroupedTaskListView(LoginRequiredMixin, ListView):
+	model = TodoItem
+	context_object_name = 'tasks'
+	template_name = 'tasks/grouped_list.html'
+
+	def get_queryset(self):
+		u = self.request.user
+		return u.tasks.all()	
 
 class TaskCreateView(View):
 	def post(self, request, *args, **kwargs):
@@ -77,6 +94,7 @@ class TaskCreateView(View):
 			new_task = form.save(commit=False)
 			new_task.owner = request.user
 			new_task.save()
+			messages.success(request, 'Задача создана')
 			return redirect(reverse('tasks:list'))
 
 		return render(request, 'tasks/create.html', {'form': form})
@@ -97,6 +115,7 @@ class TaskEditView(LoginRequiredMixin, View):
 			new_task = form.save(commit=False)
 			new_task.owner = request.user
 			new_task.save()
+			messages.success(request, 'Задача изменена')
 			return redirect(reverse('tasks:list'))
 		return render(request, 'tasks/edit.html', {'form': form, 'task': t})
 
@@ -116,12 +135,25 @@ class TaskExportView(LoginRequiredMixin, View):
 			q = q | Q(priority=TodoItem.PRIORITY_LOW)
 		tasks = TodoItem.objects.filter(owner=user).filter(q).all()
 
-		body = 'Ваши задачи и приоритеты:\n'
-		for t in tasks:
-			if t.is_completed:
-				body += f"[x] {t.description} ({t.get_priority_display()})\n"
-			else:
-				body += f"[ ] {t.description} ({t.get_priority_display()})\n"
+		if not priorities['group']:
+			body = 'Ваши задачи и приоритеты:\n'
+			for t in tasks:
+				if t.is_completed:
+					body += f"[x] {t.description} ({t.get_priority_display()})\n"
+				else:
+					body += f"[ ] {t.description} ({t.get_priority_display()})\n"
+		else:
+			body = 'Ваши задачи, сгруппированные по приоритетам:\n'
+			prio = [TodoItem().PRIORITY_CHOICES[i][1] for i in range(3)]
+
+			for i in range(len(prio)):
+				body += '\n' + prio[i] + '\n'
+				for t in tasks:
+					if t.get_priority_display() == prio[i]:
+						if t.is_completed:
+							body += f"[x] {t.description}\n"
+						else:
+							body += f"[ ] {t.description}\n"			
 		return body
 
 	def post(self, request, *args, **kwargs):

@@ -13,11 +13,11 @@
 <p><i class="fa fa-download"></i>&nbsp;<a href="{% url 'tasks:export' %}">Экспорт задач</a></p>
 	<ul id="todo-list">
 		{% for task in tasks %}
+			
+			<li>
 			{% if task.is_completed %}
-			<li class="completed">
 				<input class="checkbox" data-uid={{ task.id }} type="checkbox" disabled="disabled" checked="checked" />
 			{% else %}
-			<li>
 				<input class="checkbox" data-uid={{ task.id }} type="checkbox" />
 			{% endif %}
 				{% if task.priority == task.PRIORITY_HIGH %}
@@ -27,10 +27,18 @@
 				{% elif task.priority == task.PRIORITY_LOW %}
 				<span class="badge badge-pill badge-success">&nbsp;</span>
 				{% endif %}
-				<a href="{% url 'tasks:details' task.id %}">{{ task }}</a>
+
+				{% if task.is_completed %}
+				<a class="completed" href="{% url 'tasks:details' task.id %}">{{ task }}</a>&emsp;<small>{{task.created | timesince}}</small>
+				{% else %}
+				<a href="{% url 'tasks:details' task.id %}">{{ task }}</a>&emsp;<small>{{task.created | timesince}}</small>
+				{% endif %}
 				<a class="remove" href={% url 'tasks:delete' task.id %}>X</a>
 				<hr/>
 			</li>
+		{% empty %}
+		<li>Пока нет задач</li>
+
 		{% endfor %}
 	</ul>
 {% endblock %}

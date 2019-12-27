@@ -36,11 +36,13 @@
                     {%comment%}
                     <img src="{{ user.profile.avatar.url }}" class="img-fluid">
                     {% endcomment %}
-                    
+
                     <ul>
                         <li><a href="{% url 'edit' %}">Профиль</a></li>
                         <li><a href="{% url 'tasks:create' %}">Добавить задачу</a></li>
                         <li><a href="{% url 'tasks:list' %}">Задачи</a></li>
+                        <li>&emsp;<a href="{% url 'tasks:uncompleted' %}">Невыполненные задачи</a></li>
+                        <li>&emsp;<a href="{% url 'tasks:grouped' %}">По приоритету</a></li>
                         <li><a href="{% url 'password_reset' %}">Сбросить пароль</a></li>
                         <li><a href="{% url 'logout' %}">Выйти</a></li>
                     </ul>

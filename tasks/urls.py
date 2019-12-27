@@ -13,4 +13,6 @@ path('delete/<int:uid>', views.delete_task, name='delete'),
 path('details/<int:pk>', views.TaskDetailView.as_view(), name='details'),
 path('edit/<int:pk>', views.TaskEditView.as_view(), name='edit'),
 path('export/', views.TaskExportView.as_view(), name='export'),
+path('uncompleted/', views.UncompletedTaskListView.as_view(), name='uncompleted'),
+path('grouped/', views.GroupedTaskListView.as_view(), name='grouped'),
 ]
