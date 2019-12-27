@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Экспорт задач{% endblock %}
+
+{% block main_content %}
+<h1>Экспорт задач</h1>
+<p>На вашу почту придёт список задач. Уточните, какие задачи вы хотите в нём видеть</p>
+<form action="." method="POST">
+    {{form.as_p}}
+    {% csrf_token %}
+    <p><button type="submit" class="add">Жмяк</button></p>
+</form>
+{% endblock %}

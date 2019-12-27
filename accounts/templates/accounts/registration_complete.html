@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}Успех{% endblock %}
+
+{% block main_content %}
+<h1>Всё готово, {{ new_user.first_name }}!</h1>
+<p>Ваш аккаунт был создан, теперь можно <a href="{% url 'login' %}">войти</a>.</p>
+
+{% endblock %}

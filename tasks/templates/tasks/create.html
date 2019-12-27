@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Создать задачу{% endblock %}
+
+{% block main_content %}
+<h1>Создать задачу</h1>
+	<form action="." method="post">
+		{{ form.as_p }}
+		{% csrf_token %}
+		<button class="add" type="submit">Добавить</button>
+	</form>
+{% endblock %}
