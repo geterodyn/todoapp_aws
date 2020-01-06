@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Задачи на день{% endblock %}
+
+{% block extra_head %}
+<script src="{% static 'js/script.js' %}"></script>
+{% endblock %}
+
+{% block main_content %}
+
+{% if tag %}
+    <h1>Текущие задачи с тэгом {{ tag.name }}</h1>
+{% else %}
+    <h1>Текущие задачи</h1>
+{% endif %}
+
+<p><i class="fa fa-download"></i>&nbsp;<a href="{% url 'tasks:export' %}">Экспорт задач</a></p>
+
+{% for t in all_tags %}
+    {% if forloop.first %}<ul class="list-inline">
+        <li class="list-inline-item">тэги:</li>
+    {% endif %}
+        <li class="list-inline-item">
+            
+                {% if t.pk == tag.pk %}
+                <a href="{% url 'tasks:list' %}">
+                    <span class="badge badge-success">{{ t.name }}</span>
+                {% else %}
+                <a href="{% url 'tasks:list_by_tag' t.slug %}">
+                    <span class="badge badge-info">{{ t.name }}</span>
+                {% endif %}
+            </a>
+        </li>
+        {% if forloop.last %}</ul>{% endif %}
+{% endfor %}
+        <hr/>
+
+	<ul id="todo-list">
+		{% for task in tasks %}
+			
+			<li>
+			{% if task.is_completed %}
+				<input class="checkbox" data-uid={{ task.id }} type="checkbox" disabled="disabled" checked="checked" />
+			{% else %}
+				<input class="checkbox" data-uid={{ task.id }} type="checkbox" />
+			{% endif %}
+				{% if task.priority == task.PRIORITY_HIGH %}
+				<span class="badge badge-pill badge-danger">&nbsp;</span>
+				{% elif task.priority == task.PRIORITY_MEDIUM %}
+				<span class="badge badge-pill badge-warning">&nbsp;</span>
+				{% elif task.priority == task.PRIORITY_LOW %}
+				<span class="badge badge-pill badge-success">&nbsp;</span>
+				{% endif %}
+
+				{% if task.is_completed %}
+                <a class="completed" href="{% url 'tasks:details' task.id %}">{{ task }}</a><small>&emsp;тэги: 
+                {% for tag in task.tags.all %}{{tag.name}} {%endfor%}
+                &emsp;{{task.created | timesince}}</small>
+
+				{% else %}
+                <a href="{% url 'tasks:details' task.id %}">{{ task }}</a>
+                <small>&emsp;тэги: 
+                    {% for tag in task.tags.all %}{{tag.name}} {%endfor%}
+                    &emsp;{{task.created | timesince}}</small>
+                {% endif %}
+                
+                {% if tag %}
+                    <a class="remove" href={% url 'tasks:delete_by_tag' task.id tag.slug %}>X</a>
+                {% else %}
+                <a class="remove" href={% url 'tasks:delete' task.id %}>X</a>
+                {% endif %}
+				<hr/>
+			</li>
+            {% empty %}
+            <li>Пока нет задач</li>
+
+		{% endfor %}
+    </ul>
+
+	<ul class="list-inline">
+		{% for tag in tags %}
+		<li class="list-inline-item">
+			<span class="badge badge-info">{{ tag }}</span>
+		</li>
+		{% endfor %}
+    </ul> 
+    {{tasks.is_completed.count}}
+{% endblock %}
