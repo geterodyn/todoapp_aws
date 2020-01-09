@@ -2,6 +2,8 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 
+from taggit.managers import TaggableManager
+
 # Create your models here.
 class TodoItem(models.Model):
 	PRIORITY_HIGH = 1
@@ -24,6 +26,7 @@ class TodoItem(models.Model):
 		related_name='tasks'
 	)
 	priority = models.IntegerField('Приоритет', choices=PRIORITY_CHOICES, default=PRIORITY_MEDIUM)
+	tags = TaggableManager()
 
 	def __str__(self):
 		return self.description.lower()
@@ -33,3 +36,9 @@ class TodoItem(models.Model):
 
 	class Meta:
 		ordering = ('-created',)
+
+class TagCount(models.Model):
+	tag_slug = models.CharField(max_length=128)
+	tag_name = models.CharField(max_length=128)
+	tag_id = models.PositiveIntegerField(default=0)
+	tag_count = models.PositiveIntegerField(db_index=True, default=0)
